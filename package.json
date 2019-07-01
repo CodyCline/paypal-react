@@ -1,25 +1,54 @@
 {
-  "name": "paypal-react-component",
+  "name": "paypal-react",
   "version": "1.0.0",
-  "description": "A React.js implementation of PayPal's Smart Payment Buttons",
-  "main": "index.js",
+  "description": "React.js implementation of PayPal's Smart Payment Buttons",
+  "main": "build/index.js",
+  "module": "build/index.es.js",
+  "jsnext:main": "build/index.es.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rollup -c",
+    "test": "jest"
+  },
+  "files": [
+    "build"
+  ],
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/CodyCline/paypal-react.git"
   },
   "keywords": [
-    "PayPal",
     "react",
-    "smart",
-    "buttons"
+    "paypal",
+    "PayPal",
+    "React.js",
+    "component",
+    "Smart",
+    "Payment",
+    "Buttons"
   ],
   "author": "Cody Cline",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/CodyCline/paypal-react-component/issues"
+    "url": "https://github.com/CodyCline/paypal-react/issues"
   },
-  "homepage": "https://github.com/CodyCline/paypal-react-component#readme"
+  "homepage": "https://github.com/CodyCline/paypal-react#readme",
+  "peerDependencies": {
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.15",
+    "jest": "^24.8.0",
+    "rollup": "^1.16.3",
+    "rollup-plugin-commonjs": "^10.0.1",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-peer-deps-external": "^2.2.0",
+    "rollup-plugin-typescript2": "^0.21.2",
+    "ts-jest": "^24.0.2",
+    "typescript": "^3.5.2"
+  }
 }
