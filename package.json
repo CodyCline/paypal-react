@@ -1,0 +1,25 @@
+{
+  "name": "paypal-react-component",
+  "version": "1.0.0",
+  "description": "A React.js implementation of PayPal's Smart Payment Buttons",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CodyCline/paypal-react.git"
+  },
+  "keywords": [
+    "PayPal",
+    "react",
+    "smart",
+    "buttons"
+  ],
+  "author": "Cody Cline",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/CodyCline/paypal-react-component/issues"
+  },
+  "homepage": "https://github.com/CodyCline/paypal-react-component#readme"
+}
