@@ -1,5 +1,5 @@
 /**
- * @class ExampleComponent
+ * @class PayPalSmartButton
  */
 
 import * as React from "react";
@@ -22,6 +22,7 @@ export interface PayPalProps {
 	onShippingChange?: (data:object, actions: object) => void,
 	onError?: (err: object) => void,
 	onClick?: () => void,
+	onInit?: () => void
 }
 
 export default class PayPalSmartButton extends React.Component<PayPalProps> {
@@ -47,9 +48,13 @@ export default class PayPalSmartButton extends React.Component<PayPalProps> {
 	}
 	render() {
 		window.paypal.Buttons({
+			onApprove: this.onApprove,
+			createOrder: this.createOrder,
 			onCancel: this.props.onCancel,
+			onShippingChange: this.props.onShippingChange,
 			onError: this.props.onError,
 			onClick: this.props.onClick,
+			onInit: this.props.onInit,
 			style: this.props.style,
 		})
 		.render('#paypal-smart-checkout');
