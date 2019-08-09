@@ -19,11 +19,32 @@ export interface PayPalProps {
 
 	onCancel?: (data: object) => void,
 	onSuccess?: (data: object) => void,
+	onShippingChange?: (data:object, actions: object) => void,
 	onError?: (err: object) => void,
 	onClick?: () => void,
 }
 
 export default class PayPalSmartButton extends React.Component<PayPalProps> {
+	async onApprove (data:any, actions:any) {
+		const order = await actions.order.capture();
+
+		if(order.error === 'INSTRUMENT_DECLINED') {
+			return actions.restart()
+		}
+	}
+
+	createOrder (data:any, actions:any) {
+		return actions.order.create({
+            purchase_units: [
+              {
+                amount: {
+					currency_code: "USD",
+					value: this.props.total,
+				},
+              },
+            ],
+        });
+	}
 	render() {
 		window.paypal.Buttons({
 			onCancel: this.props.onCancel,
