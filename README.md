@@ -122,7 +122,7 @@ class App extends React.Component {
 }
 ```
 ## Props
-Full list of props with their corresponding name, type, description and example values.  Prop Name | Type | Example Value | Description
+Prop Name | Type | Example Value | Description
 --- | --- | --- | --- |
 clientId | string | `token` | Used to authenticate. Seperate tokens are used in sanbox and production. Visit [here](https://developer.paypal.com/developer/applications/) to create an app and get a token.
 currency | string | `"USD"` or `"CAD"` | Must be a formatted as a 3-letter ISO code representing a supported currency. The full list of fiat currencies supported by PayPal is [located here](https://developer.paypal.com/docs/api/reference/currency-codes/ "Supported FIAT Currencies")
