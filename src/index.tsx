@@ -1,8 +1,9 @@
-/**
- * @class PayPalSmartButton
- */
+/*
+** @class PayPalSmartButton
+*/
 
 import * as React from "react";
+import {useState, useEffect} from 'react';
 
 //This is so typescript can know what the window object is.
 interface Window {
@@ -10,10 +11,13 @@ interface Window {
 }
 declare var window: Window;
 
+interface PayPalActions {
+	[key: string]: any
+}
 
 export interface PayPalProps {
 	currency: string,
-	total: any,
+	total: string | number,
 	style?: object,
 	disabled?: boolean,
 
@@ -26,21 +30,23 @@ export interface PayPalProps {
 }
 
 export default class PayPalSmartButton extends React.Component<PayPalProps> {
-	async onApprove (data:any, actions:any) {
+
+	async onApprove (data:object, actions:PayPalActions) { //Data is also an argument
 		const order = await actions.order.capture();
 
 		if(order.error === 'INSTRUMENT_DECLINED') {
 			return actions.restart()
 		}
-	}
+	} 
 
-	createOrder (data:any, actions:any) {
+	createOrder (data:object, actions:PayPalActions) { //Data is also an argument
+		
 		return actions.order.create({
             purchase_units: [
               {
                 amount: {
 					currency_code: "USD",
-					value: this.props.total,
+					value: "10.0",
 				},
               },
             ],
@@ -59,9 +65,67 @@ export default class PayPalSmartButton extends React.Component<PayPalProps> {
 		})
 		.render('#paypal-smart-checkout');
 		return  (
-			<React.Fragment>
-				<div id="paypal-smart-checkout"></div>
-			</React.Fragment>
+			<div id="paypal-smart-checkout"></div>
 		)
 	}
 }
+
+
+function useScript(src:string) {
+	let cachedScripts : string[] = [];
+    // Keeping track of script loaded and error state
+    const [state, setState] = useState({
+    	loaded: false,
+      	error: false
+    });
+
+    useEffect(() => {
+    	// If cachedScripts array already includes src that means another instance ...
+      	// ... of this hook already loaded this script, so no need to load again.
+        if (cachedScripts.includes(src)) {
+        	return setState({
+            	loaded: true,
+            	error: false
+          	});
+        } else {
+          	cachedScripts.push(src);
+          	// Create script
+          	let script = document.createElement('script');
+          	script.src = src;
+          	script.async = true;
+
+          	// Script event listener callbacks for load and error
+          	const onScriptLoad = () => {
+            	setState({
+              		loaded: true,
+              		error: false
+            	});
+          	};
+
+          	const onScriptError = () => {
+				// Remove from cachedScripts we can try loading again
+				const index = cachedScripts.indexOf(src);
+				if (index >= 0) cachedScripts.splice(index, 1);
+				script.remove();
+
+				return setState({
+					loaded: true,
+					error: true
+				});
+          	};
+
+          	script.addEventListener('load', onScriptLoad);
+          	script.addEventListener('error', onScriptError);
+
+          	// Add script to document body
+          	document.body.appendChild(script);
+
+			// Remove event listeners on cleanup
+			return () => {
+				script.removeEventListener('load', onScriptLoad);
+				script.removeEventListener('error', onScriptError);
+			};
+      	}
+	},[src]);
+  	return [state.loaded, state.error];
+};
