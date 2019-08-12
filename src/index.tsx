@@ -40,49 +40,55 @@ export interface PayPalProps {
 	onInit?: () => void
 }
 
-export default class PayPalSmartButton extends React.Component<PayPalProps> {
-
-	async onApprove (data:object, actions:objectUnknownProperties) { //Data is also an argument
+const PayPalSmartButton:React.FunctionComponent<PayPalProps> = (props) => {
+	const [loaded, error] : boolean[]  = useScript(
+		`https://www.paypal.com/sdk/js?client-id=${props.env === "production" ? props.credentials.production : props.credentials.sandbox}&currency=${props.currency}`
+	);
+	async function onApprove (data:any, actions:any) {
 		const order = await actions.order.capture();
 
 		if(order.error === 'INSTRUMENT_DECLINED') {
 			return actions.restart()
 		}
-	} 
+	}
 
-	createOrder (data:object, actions:objectUnknownProperties) { //Data is also an argument
-		
+	function createOrder (data:any, actions:any) {
 		return actions.order.create({
             purchase_units: [
               {
                 amount: {
-					currency_code: "USD",
-					value: "10.0",
+					value: props.total
 				},
               },
             ],
         });
 	}
-	render() {
+
+	//This needs to wait for the script to load 
+	if(loaded) {
 		window.paypal.Buttons({
-			onApprove: this.onApprove,
-			createOrder: this.createOrder,
-			onCancel: this.props.onCancel,
-			onShippingChange: this.props.onShippingChange,
-			onError: this.props.onError,
-			onClick: this.props.onClick,
-			onInit: this.props.onInit,
-			style: this.props.style,
+			onApprove: onApprove,
+			createOrder: createOrder,
+			onCancel: props.onCancel,
+			onShippingChange: props.onShippingChange,
+			onError: props.onError,
+			onClick: props.onClick,
+			onInit: props.onInit,
+			style: props.style,
 		})
 		.render('#paypal-smart-checkout');
-		return  (
-			<div id="paypal-smart-checkout"></div>
-		)
 	}
+					
+	return  (
+		<React.Fragment>
+			{loaded && !error && <div id="paypal-smart-checkout"></div>}
+		</React.Fragment>
+	)
+	
 }
 
-
-function useScript(src:string) {
+//Mount the script to the dom
+const useScript = (src:string) => {
 	let cachedScripts : string[] = [];
     // Keeping track of script loaded and error state
     const [state, setState] = useState({
@@ -91,8 +97,7 @@ function useScript(src:string) {
     });
 
     useEffect(() => {
-    	// If cachedScripts array already includes src that means another instance ...
-      	// ... of this hook already loaded this script, so no need to load again.
+		//Check if the array already has the src so that this doesn't load the script twice
         if (cachedScripts.includes(src)) {
         	return setState({
             	loaded: true,
@@ -100,7 +105,7 @@ function useScript(src:string) {
           	});
         } else {
           	cachedScripts.push(src);
-          	// Create script
+          	// Create script and push it to the dom
           	let script = document.createElement('script');
           	script.src = src;
           	script.async = true;
