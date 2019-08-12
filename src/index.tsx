@@ -9,29 +9,40 @@ import {useState, useEffect} from 'react';
 interface Window {
     paypal?: any;
 }
-declare var window: Window;
 
-interface PayPalActions {
+//Most returned objects have unpredictable types like strings, functions, numbers, objects
+type objectUnknownProperties = {
 	[key: string]: any
 }
 
-export interface PayPalProps {
-	currency: string,
-	total: string | number,
-	style?: object,
-	disabled?: boolean,
+//Strict typing of the credentialItems type
+type credentialItems = {
+	"production": string,
+	"sandbox": string
+}
 
-	onCancel?: (data: object) => void,
-	onSuccess?: (data: object) => void,
-	onShippingChange?: (data:object, actions: object) => void,
-	onError?: (err: object) => void,
-	onClick?: () => void,
+declare var window: Window;
+
+export interface PayPalProps {
+	env: "production" | "sandbox"
+	credentials: credentialItems
+	currency: string
+	total: string | number
+	style?: objectUnknownProperties
+	loadingComponent?: React.ReactNode | string
+	errorComponent?: React.ReactNode | string
+
+	onCancel?: (data: object) => void
+	onSuccess?: (data: object) => void
+	onShippingChange?: (data:object, actions: object) => void
+	onError?: (err: object) => void
+	onClick?: () => void
 	onInit?: () => void
 }
 
 export default class PayPalSmartButton extends React.Component<PayPalProps> {
 
-	async onApprove (data:object, actions:PayPalActions) { //Data is also an argument
+	async onApprove (data:object, actions:objectUnknownProperties) { //Data is also an argument
 		const order = await actions.order.capture();
 
 		if(order.error === 'INSTRUMENT_DECLINED') {
@@ -39,7 +50,7 @@ export default class PayPalSmartButton extends React.Component<PayPalProps> {
 		}
 	} 
 
-	createOrder (data:object, actions:PayPalActions) { //Data is also an argument
+	createOrder (data:object, actions:objectUnknownProperties) { //Data is also an argument
 		
 		return actions.order.create({
             purchase_units: [
