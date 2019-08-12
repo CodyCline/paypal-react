@@ -1,15 +1,14 @@
 # PayPal React Smart Button
 
 ## Overview 
-Currently, this is a work-in-progress for a simple and flexible React.js implementation of the newest version of the PayPal Smart Payment Buttons API.
+Currently, this is a work-in-progress for a simple and flexible React.js implementation of the latest version of PayPal's Smart Payment Buttons.
 
 ## Installation
 
-`yarn add ...`  
+`npm i `  
+Or  
+`yarn add paypal-button-react`  
 
-Or
-
-`npm i ...`
 ## Quickstart
 Simplest example to get you going.
 ```jsx
@@ -31,10 +30,16 @@ class App extends React.Component {
     	console.log("Something went wrong...", data)
     }
     
+    const credentials = {
+        "sandbox": "YOUR_SANDBOX_CREDENTIALS,
+        "production": "YOUR_PRODUCTION_CREDENTIALS"
+    }
+
 	render () {
     	return (
-        	<PayPalSmartButton 
-                clientId="CLIENT_ID" //Obtained from PayPal developer console
+            <PayPalSmartButton 
+                env="sandbox" //Must specify sandbox or production!
+                credentials={credentials}//Obtained from PayPal developer console
                 currency="USD"
                 total="100.0"
                 onSuccess={this.onSuccess}
@@ -45,6 +50,9 @@ class App extends React.Component {
 
 }
 ```
+
+## Backend Verification.
+TODO
 
 ## Other Callback Events
 Here is a list of other callback events that you can use for things like rejecting international customers or validating user input.
@@ -83,7 +91,7 @@ class App extends React.Component {
     	return (
         	<PayPalSmartButton 
                 //... Other methods and props
-                onInit: this.onInit
+                onInit={this.onInit}
             />
         )
     }
@@ -109,12 +117,16 @@ class App extends React.Component {
         	actions.disable()
         }
     }
+
+    validateInput () {
+        //Some kind of business logic that tells the user to fill out all fields
+    }
     
 	render () {
     	return (
         	<PayPalSmartButton 
                 //... Other methods and props
-                onClick: this.onClick
+                onClick={() => this.validateInput}
             />
         )
     }

@@ -1,5 +1,5 @@
 {
-  "name": "paypal-react",
+  "name": "paypal-button-react",
   "version": "1.0.0",
   "description": "React.js implementation of PayPal's Smart Payment Buttons",
   "main": "build/index.js",
@@ -41,7 +41,7 @@
     "react-dom": "^16.0.0"
   },
   "devDependencies": {
-    "@types/jest": "^24.0.15",
+    "@types/jest": "^24.0.17",
     "@types/react": "^16.9.1",
     "@types/react-dom": "^16.8.5",
     "@types/react-test-renderer": "^16.9.0",

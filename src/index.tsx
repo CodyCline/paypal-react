@@ -1,9 +1,4 @@
-/*
-** @class PayPalSmartButton
-*/
-
-import * as React from "react";
-import {useState, useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 
 //This is so typescript can know what the window object is.
 interface Window {
@@ -88,6 +83,7 @@ const PayPalSmartButton:React.FunctionComponent<PayPalProps> = (props) => {
 }
 
 //Mount the script to the dom
+
 const useScript = (src:string) => {
 	let cachedScripts : string[] = [];
     // Keeping track of script loaded and error state
@@ -95,11 +91,10 @@ const useScript = (src:string) => {
     	loaded: false,
       	error: false
     });
-
     useEffect(() => {
 		//Check if the array already has the src so that this doesn't load the script twice
         if (cachedScripts.includes(src)) {
-        	return setState({
+        	setState({
             	loaded: true,
             	error: false
           	});
@@ -145,3 +140,5 @@ const useScript = (src:string) => {
 	},[src]);
   	return [state.loaded, state.error];
 };
+
+export default PayPalSmartButton;
