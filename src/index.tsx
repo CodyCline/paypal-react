@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 
 //This is so typescript can know what the window object is.
 interface Window {
-    paypal?: any;
+	paypal?: any;
 }
 
 //Most returned objects have unpredictable types like strings, functions, numbers, objects
@@ -39,28 +39,31 @@ const PayPalSmartButton:React.FunctionComponent<PayPalProps> = (props) => {
 	const [loaded, error] : boolean[]  = useScript(
 		`https://www.paypal.com/sdk/js?client-id=${props.env === "production" ? props.credentials.production : props.credentials.sandbox}&currency=${props.currency}`
 	);
-	async function onApprove (data:any, actions:any) {
-		const order = await actions.order.capture();
-
-		if(order.error === 'INSTRUMENT_DECLINED') {
-			return actions.restart()
+	async function onApprove (data:object, actions:objectUnknownProperties) {
+		try {
+			const order = await actions.order.capture();
+			if(order.error === 'INSTRUMENT_DECLINED') {
+				return actions.restart()
+			}
+		} catch (error) {
+			console.log(error)
+			throw new Error(error);
 		}
 	}
 
-	function createOrder (data:any, actions:any) {
+	function createOrder (data:object, actions:objectUnknownProperties) {
 		return actions.order.create({
             purchase_units: [
-              {
-                amount: {
-					value: props.total
-				},
-              },
+            	{
+                	amount: {
+						value: props.total
+					},
+              	},
             ],
         });
 	}
 
-	//This needs to wait for the script to load 
-	if(loaded) {
+	if(loaded && !error) {
 		window.paypal.Buttons({
 			onApprove: onApprove,
 			createOrder: createOrder,
@@ -73,10 +76,16 @@ const PayPalSmartButton:React.FunctionComponent<PayPalProps> = (props) => {
 		})
 		.render('#paypal-smart-checkout');
 	}
-					
-	return  (
+	else if(error) {
+		return (
+			<React.Fragment>
+				{props.errorComponent? props.errorComponent : <h3>Something went wrong ... </h3>}
+			</React.Fragment>
+		);
+	}
+	return (
 		<React.Fragment>
-			{loaded && !error && <div id="paypal-smart-checkout"></div>}
+			{loaded ? <div id="paypal-smart-checkout"></div> : props.loadingComponent ? props.loadingComponent : <span>Loading ... </span>}
 		</React.Fragment>
 	)
 	
