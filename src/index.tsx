@@ -6,7 +6,7 @@ interface Window {
 }
 
 //Most returned objects have unpredictable types like strings, functions, numbers, objects
-type objectUnknownProperties = {
+type unknownProperties = {
 	[key: string]: any
 }
 
@@ -23,7 +23,7 @@ export interface PayPalProps {
 	credentials: credentialItems
 	currency: string
 	total: string | number
-	style?: objectUnknownProperties
+	style?: object
 	loadingComponent?: React.ReactNode | string
 	errorComponent?: React.ReactNode | string
 
@@ -39,7 +39,7 @@ const PayPalSmartButton:React.FunctionComponent<PayPalProps> = (props) => {
 	const [loaded, error] : boolean[]  = useScript(
 		`https://www.paypal.com/sdk/js?client-id=${props.env === "production" ? props.credentials.production : props.credentials.sandbox}&currency=${props.currency}`
 	);
-	async function onApprove (data:object, actions:objectUnknownProperties) {
+	async function onApprove (data:object, actions:unknownProperties) {
 		try {
 			const order = await actions.order.capture();
 			if(order.error === 'INSTRUMENT_DECLINED') {
@@ -51,7 +51,7 @@ const PayPalSmartButton:React.FunctionComponent<PayPalProps> = (props) => {
 		}
 	}
 
-	function createOrder (data:object, actions:objectUnknownProperties) {
+	function createOrder (data:object, actions:unknownProperties) {
 		return actions.order.create({
             purchase_units: [
             	{
@@ -79,7 +79,7 @@ const PayPalSmartButton:React.FunctionComponent<PayPalProps> = (props) => {
 	else if(error) {
 		return (
 			<React.Fragment>
-				{props.errorComponent? props.errorComponent : <h3>Something went wrong ... </h3>}
+				{props.errorComponent? props.errorComponent : <span>Something went wrong ... </span>}
 			</React.Fragment>
 		);
 	}
