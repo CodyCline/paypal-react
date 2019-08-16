@@ -1,6 +1,6 @@
 {
   "name": "paypal-button-react",
-  "version": "1.0.0",
+  "version": "1.1.1",
   "description": "React.js implementation of PayPal's Smart Payment Buttons",
   "main": "build/index.js",
   "module": "build/index.es.js",
@@ -37,8 +37,8 @@
   },
   "homepage": "https://github.com/CodyCline/paypal-react#readme",
   "peerDependencies": {
-    "react": "^16.0.0",
-    "react-dom": "^16.0.0"
+    "react": "^16.8.0",
+    "react-dom": "^16.8.0"
   },
   "devDependencies": {
     "@types/jest": "^24.0.17",

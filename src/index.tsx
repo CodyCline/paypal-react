@@ -65,7 +65,7 @@ const PayPalSmartButton:React.FunctionComponent<PayPalProps> = (props) => {
 
 	if(loaded && !error) {
 		window.paypal.Buttons({
-			onApprove: onApprove,
+			onApprove: props.onSuccess,
 			createOrder: createOrder,
 			onCancel: props.onCancel,
 			onShippingChange: props.onShippingChange,
