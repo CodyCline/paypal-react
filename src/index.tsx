@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from "react";
 
 //This is so typescript can know what the window object is.
 interface Window {
@@ -6,7 +6,7 @@ interface Window {
 }
 
 //Most returned objects have unpredictable types like strings, functions, numbers, objects
-type unknownProperties = {
+type dynamicObject = {
 	[key: string]: any
 }
 
@@ -16,7 +16,7 @@ type credentialItems = {
 	"sandbox": string
 }
 
-declare var window: Window;
+declare const window: Window;
 
 export interface PayPalProps {
 	env: "production" | "sandbox"
@@ -25,7 +25,8 @@ export interface PayPalProps {
 	total: string | number
 	style?: object
 	loadingComponent?: React.ReactNode | string
-	errorComponent?: React.ReactNode | string
+	errorComponent?: React.ReactNode | string,
+	intent?: "capture" | "authorize" | "order",
 
 	onCancel?: (data: object) => void
 	onSuccess?: (data: object) => void
@@ -37,12 +38,13 @@ export interface PayPalProps {
 
 const PayPalSmartButton:React.FunctionComponent<PayPalProps> = (props) => {
 	const [loaded, error] : boolean[]  = useScript(
-		`https://www.paypal.com/sdk/js?client-id=${props.env === "production" ? props.credentials.production : props.credentials.sandbox}&currency=${props.currency}`
+		`https://www.paypal.com/sdk/js?client-id=${props.env === "production" ? props.credentials.production : props.credentials.sandbox}&currency=${props.currency}${props.intent?`&intent=${props.intent}`: null}`
 	);
-	async function onApprove (data:object, actions:unknownProperties) {
+	const paypalRef = useRef<HTMLDivElement>(null); //target dom node
+	async function onApprove (data:object, actions:dynamicObject) {
 		try {
 			const order = await actions.order.capture();
-			if(order.error === 'INSTRUMENT_DECLINED') {
+			if(order.error === "INSTRUMENT_DECLINED") {
 				return actions.restart()
 			}
 		} catch (error) {
@@ -51,7 +53,7 @@ const PayPalSmartButton:React.FunctionComponent<PayPalProps> = (props) => {
 		}
 	}
 
-	function createOrder (data:object, actions:unknownProperties) {
+	const createOrder = (data:object, actions:any) => {
 		return actions.order.create({
             purchase_units: [
             	{
@@ -74,7 +76,7 @@ const PayPalSmartButton:React.FunctionComponent<PayPalProps> = (props) => {
 			onInit: props.onInit,
 			style: props.style,
 		})
-		.render('#paypal-smart-checkout');
+		.render(paypalRef.current);
 	}
 	else if(error) {
 		return (
@@ -85,14 +87,13 @@ const PayPalSmartButton:React.FunctionComponent<PayPalProps> = (props) => {
 	}
 	return (
 		<React.Fragment>
-			{loaded ? <div id="paypal-smart-checkout"></div> : props.loadingComponent ? props.loadingComponent : <span>Loading ... </span>}
+			{loaded ? <div ref={paypalRef}/> : props.loadingComponent ? props.loadingComponent : <span>Loading ... </span>}
 		</React.Fragment>
 	)
 	
 }
 
 //Mount the script to the dom
-
 const useScript = (src:string) => {
 	let cachedScripts : string[] = [];
     // Keeping track of script loaded and error state
@@ -110,7 +111,7 @@ const useScript = (src:string) => {
         } else {
           	cachedScripts.push(src);
           	// Create script and push it to the dom
-          	let script = document.createElement('script');
+          	let script = document.createElement("script");
           	script.src = src;
           	script.async = true;
 
@@ -134,16 +135,16 @@ const useScript = (src:string) => {
 				});
           	};
 
-          	script.addEventListener('load', onScriptLoad);
-          	script.addEventListener('error', onScriptError);
+          	script.addEventListener("load", onScriptLoad);
+          	script.addEventListener("error", onScriptError);
 
           	// Add script to document body
           	document.body.appendChild(script);
 
 			// Remove event listeners on cleanup
 			return () => {
-				script.removeEventListener('load', onScriptLoad);
-				script.removeEventListener('error', onScriptError);
+				script.removeEventListener("load", onScriptLoad);
+				script.removeEventListener("error", onScriptError);
 			};
       	}
 	},[src]);

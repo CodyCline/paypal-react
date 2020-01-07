@@ -1,5 +1,4 @@
 build/
 node_modules/
-package-lock.json
 __snapshots__
 .env

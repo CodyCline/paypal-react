@@ -12,7 +12,7 @@
       "forceConsistentCasingInFileNames": true,
       "noImplicitReturns": false,
       "noImplicitThis": true,
-      "noImplicitAny": true,
+      "noImplicitAny": false,
       "strictNullChecks": true,
       "allowSyntheticDefaultImports": true,
       "suppressImplicitAnyIndexErrors": true,
