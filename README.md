@@ -30,7 +30,7 @@ class App extends React.Component {
     }
     
     const credentials = {
-        "sandbox": "YOUR_SANDBOX_CREDENTIALS,
+        "sandbox": "YOUR_SANDBOX_CREDENTIALS",
         "production": "YOUR_PRODUCTION_CREDENTIALS"
     }
 
@@ -238,6 +238,7 @@ onShippingChange | function | `onShippingChange(data, actions)` | Used for detec
 onCancel | function | `onCancel() ` | Callback event that fires when a user cancels the transaction before paying.
 onInit | function | `onInit(data, actions)` | This fires off immediately after render. 
 onClick | function | `onClick()` | Fires off when you click any of the buttons.
+intent | string | `capture` `authorize` | Specifies whether to capture the funds immediately or authorize the transaction later. Must be specified in production: during development, it defaults to `capture`.
 ## TODO
 * Support for server-side rendering
 * Test and specify peer-dependency requirements
